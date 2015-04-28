@@ -1,0 +1,29 @@
+{
+  "name": "izzle/io",
+  "description": "Izzle IO Library and Classes",
+  "keywords": ["izzle", "library", "classes"],
+  "homepage": "http://www.izzle.org",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Izzle",
+      "email": "daniel@izzle.org",
+      "homepage": "http://www.izzle.org",
+      "role": "Founder"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  },
+  "autoload": {
+    "psr-0": {
+      "": "src/"
+    }
+  }
+}
