@@ -104,8 +104,8 @@ class FileInfo
 
             $fileStats = stat($this->fullName);
             $this->setLength($fileStats[7]);
-            $this->changed = new \DateTime($fileStats[9]);
-            $this->accessed = new \DateTime($fileStats[8]);
+            $this->changed = new \DateTime('@' . $fileStats[9]);
+            $this->accessed = new \DateTime('@' . $fileStats[8]);
         }
     }
 
