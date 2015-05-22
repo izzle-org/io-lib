@@ -10,6 +10,9 @@ class FileInfo
     protected $name;
     protected $extension;
     protected $length;
+    protected $changed;
+    protected $accessed;
+    protected $content;
     protected $directory;
     protected $exists;
     protected $isReadOnly;
@@ -101,6 +104,8 @@ class FileInfo
 
             $fileStats = stat($this->fullName);
             $this->setLength($fileStats[7]);
+            $this->changed = new \DateTime($fileStats[9]);
+            $this->accessed = new \DateTime($fileStats[8]);
         }
     }
 
@@ -205,9 +210,71 @@ class FileInfo
      */
     public function setLength($length)
     {
-        $this->length = (int)$length;
+        $this->length = (int) $length;
 
         return $this;
+    }
+
+    /**
+     * Gets the value of changed.
+     *
+     * @return \DateTime
+     */
+    public function getChanged()
+    {
+        return $this->changed;
+    }
+
+    /**
+     * Gets the value of accessed.
+     *
+     * @return \DateTime
+     */
+    public function getAccessed()
+    {
+        return $this->accessed;
+    }
+
+    /**
+     * Gets the value of content.
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        if ($this->exists && $this->content === null) {
+            $this->content = file_get_contents($this->fullName);
+        }
+
+        return $this->content;
+    }
+    
+    /**
+     * Sets the value of content.
+     *
+     * @param string $content the content
+     *
+     * @return self
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Writes content data to file
+     *
+     * @return bool / int
+     */
+    public function write()
+    {
+        if ($this->exists && $this->content !== null) {
+            return file_put_contents($this->fullName, $this->content);
+        }
+
+        return false;
     }
 
     /**
@@ -253,7 +320,7 @@ class FileInfo
      */
     public function setExists($exists)
     {
-        $this->exists = (bool)$exists;
+        $this->exists = (bool) $exists;
 
         return $this;
     }
