@@ -17,6 +17,11 @@ class FileInfo
     protected $exists;
     protected $isReadOnly;
 
+    /**
+     * @param $path
+     * @param bool|true $directory
+     * @throws ArgumentNullException
+     */
     public function __construct($path, $directory = true)
     {
         if ($path === null) {
@@ -41,6 +46,9 @@ class FileInfo
         $this->getInfos();
     }
 
+    /**
+     * @return bool
+     */
     public function create()
     {
         if (!$this->exists) {
@@ -54,6 +62,10 @@ class FileInfo
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws FileNotFoundException
+     */
     public function delete()
     {
         if ($this->exists) {
@@ -63,6 +75,11 @@ class FileInfo
         }
     }
 
+    /**
+     * @param $name
+     * @return bool
+     * @throws FileNotFoundException
+     */
     public function rename($name)
     {
         if ($this->exists) {
@@ -80,12 +97,17 @@ class FileInfo
         }
     }
 
+    /**
+     * @param $name
+     * @return bool
+     * @throws FileNotFoundException
+     */
     public function move($name)
     {
         if ($this->exists) {
             if (rename($this->fullName, $name)) {
                 $this->name = basename($name);
-                $this->fullName = realpath($name);
+                $this->fullName = $name;
 
                 return true;
             }
@@ -99,7 +121,7 @@ class FileInfo
     protected function getInfos()
     {
         if ($this->exists) {
-            $this->setFullName(realpath($this->fullName))
+            $this->setFullName($this->fullName)
                 ->setIsReadOnly(!is_readable($this->fullName));
 
             $fileStats = stat($this->fullName);
