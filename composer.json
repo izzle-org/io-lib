@@ -1,7 +1,7 @@
 {
   "name": "izzle/io",
   "description": "Izzle IO Library and Classes",
-  "keywords": ["izzle", "library", "classes"],
+  "keywords": ["io", "library", "sys"],
   "homepage": "http://www.izzle.org",
   "type": "library",
   "license" : "MIT",
