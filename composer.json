@@ -4,6 +4,7 @@
   "keywords": ["izzle", "library", "classes"],
   "homepage": "http://www.izzle.org",
   "type": "library",
+  "license" : "MIT",
   "authors": [
     {
       "name": "Izzle",
