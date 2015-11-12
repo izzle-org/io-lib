@@ -40,7 +40,7 @@ class FileInfo
             ->setIsReadOnly(false);
 
         if ($directory) {
-            $this->setDirectory((Directory::getCurrentDirectory() !== null) ? Directory::getCurrentDirectory() : new DirectoryInfo(pathinfo($this->fullName, PATHINFO_DIRNAME), false));
+            $this->setDirectory(new DirectoryInfo(pathinfo($this->fullName, PATHINFO_DIRNAME), false));
         }
         
         $this->getInfos();
