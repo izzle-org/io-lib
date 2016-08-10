@@ -2,6 +2,7 @@
 ------------------
 - Added unit tests
 - Fixed reg ex for invalid path characters
+- Fixed directory empty property on deleting
 
 0.7.2
 -----
