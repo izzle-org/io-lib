@@ -1,8 +1,8 @@
 <?php
 namespace Izzle\IO;
 
-use Izzle\IO\Exception\FileNotFoundException,
-    Izzle\IO\Exception\ArgumentNullException;
+use Izzle\IO\Exception\FileNotFoundException;
+use Izzle\IO\Exception\ArgumentNullException;
 
 class FileInfo
 {
