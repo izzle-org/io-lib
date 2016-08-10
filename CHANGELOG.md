@@ -1,5 +1,5 @@
-0.7.3 (unreleased)
-------------------
+0.7.3
+-----
 - Added unit tests
 - Fixed reg ex for invalid path characters
 - Fixed directory empty property on deleting
