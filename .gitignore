@@ -4,6 +4,7 @@ composer.lock
 composer-test.lock
 vendor/
 .idea/
+/tests/Coverage/
 
 # Ignore binary files
 guzzle.phar

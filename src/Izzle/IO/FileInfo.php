@@ -28,7 +28,7 @@ class FileInfo
             throw new ArgumentNullException('path is null');
         }
 
-        if (preg_match('/\,\<\>\|/', $path)) {
+        if (preg_match('/[\,\<\>\|]/', $path)) {
             throw new \InvalidArgumentException('invalid path characters');
         }
 
