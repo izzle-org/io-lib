@@ -74,12 +74,15 @@ class DirectoryTest extends TestCase
         $file4->create();
         
         $files = Directory::getFiles('./tests/Active');
+        
         foreach ($files as $file) {
             $this->assertInstanceOf(FileInfo::class, $file);
         }
+        
         //with search
         $files = Directory::getFiles('./tests/Active', '*.html');
         $this->assertEquals(2, count($files));
+        
         foreach ($files as $file) {
             $this->assertInstanceOf(FileInfo::class, $file);
         }
@@ -87,9 +90,11 @@ class DirectoryTest extends TestCase
         //with search + recursive
         $files = Directory::getFiles('./tests/Active', '*.html', true);
         $this->assertEquals(3, count($files));
+        
         foreach ($files as $file) {
             $this->assertInstanceOf(FileInfo::class, $file);
         }
+        
         Directory::delete('./tests/Active', true);
     }
     
@@ -107,6 +112,7 @@ class DirectoryTest extends TestCase
         foreach ($dirs as $dir) {
             $this->assertInstanceOf(DirectoryInfo::class, $dir);
         }
+        
         //with search
         $dirs = Directory::getDirectories('./tests/Active', 'Subfold*');
         $this->assertEquals(3, count($dirs));
@@ -114,6 +120,7 @@ class DirectoryTest extends TestCase
         foreach ($dirs as $dir) {
             $this->assertInstanceOf(DirectoryInfo::class, $dir);
         }
+        
         Directory::delete('./tests/Active', true);
     }
 }
