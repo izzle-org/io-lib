@@ -15,7 +15,7 @@ class DirectoryInfo
     protected $loadParent;
     
     /**
-     * @param           $path
+     * @param $path
      * @param bool|true $parent
      * @throws ArgumentNullException
      */
@@ -44,7 +44,7 @@ class DirectoryInfo
      */
     public function create()
     {
-        if ( !$this->exists) {
+        if (!$this->exists) {
             if ($this->exists = mkdir($this->fullName, 0777, true)) {
                 $this->getInfos();
             }
@@ -66,18 +66,22 @@ class DirectoryInfo
         if (!$this->exists) {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
         }
+    
+        $this->setEmpty($this->isEmpty());
         
-        if ($this->isEmpty() || $recursive) {
-            $this->setExists(false);
-            
-            if ($this->empty) {
-                return rmdir($this->fullName);
-            } elseif ($recursive) {
-                return $this->deleteRecursively();
-            }
-        } else {
+        if (!$this->getEmpty() && !$recursive) {
             throw new DirectoryNotEmptyException("Directory not empty");
         }
+        
+        $this->setExists(false);
+        
+        if ($this->empty) {
+            return rmdir($this->fullName);
+        } elseif ($recursive) {
+            return $this->deleteRecursively();
+        }
+        
+        return false;
     }
     
     /**
@@ -87,7 +91,10 @@ class DirectoryInfo
     public function clean()
     {
         if ($this->exists) {
-            return $this->cleanRecursively();
+            $result = $this->cleanRecursively();
+            $this->setEmpty($result);
+            
+            return $result;
         } else {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
         }
@@ -100,15 +107,18 @@ class DirectoryInfo
      */
     public function move($destPath)
     {
-        if ( !$this->exists) {
+        if (!$this->exists) {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
         }
+        
         if (rename($this->fullName, $destPath)) {
             $this->name = basename($destPath);
             $this->fullName = $destPath;
             
             return true;
         }
+        
+        return false;
     }
     
     /**
@@ -118,9 +128,10 @@ class DirectoryInfo
      */
     public function rename($name)
     {
-        if ( !$this->exists) {
+        if (!$this->exists) {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
         }
+        
         $destPath = Path::combine($this->getParent()->getFullName(), $name);
         if (rename($this->fullName, $destPath)) {
             $this->name = $name;
@@ -128,10 +139,12 @@ class DirectoryInfo
             
             return true;
         }
+        
+        return false;
     }
     
     /**
-     * @param null       $search
+     * @param null $search
      * @param bool|false $recursive
      * @return array
      */
@@ -143,7 +156,7 @@ class DirectoryInfo
             $this->getFilesRecursively($this->fullName, $search, $fileInfos);
         } else {
             foreach (glob(Path::combine($this->fullName, $search)) as $file) {
-                if ( !is_dir($file)) {
+                if (!is_dir($file)) {
                     $fileInfos[] = new FileInfo($file);
                 }
             }
@@ -164,7 +177,7 @@ class DirectoryInfo
         }
         
         foreach (glob(Path::combine($fullName, $search)) as $file) {
-            if ( !is_dir($file)) {
+            if (!is_dir($file)) {
                 $fileInfos[] = new FileInfo($file);
             }
         }
@@ -212,7 +225,7 @@ class DirectoryInfo
     }
     
     /**
-     * @param           $path
+     * @param $path
      * @param bool|true $delDir
      * @return bool
      */

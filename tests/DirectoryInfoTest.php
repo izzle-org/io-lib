@@ -18,14 +18,13 @@ class DirectoryInfoTest extends TestCase
         $this->assertInstanceOf(DirectoryInfo::class, $dir);
     }
     
-    
     /**
      * @expectedException Izzle\IO\Exception\ArgumentNullException
      * @expectedExceptionMessage path is null
      */
     public function testDirectoryInfoConstructorWithNoPath()
     {
-        $dir = new DirectoryInfo(null);
+        new DirectoryInfo(null);
     }
     
     /**
@@ -34,7 +33,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath1()
     {
-        $dir = new DirectoryInfo('/html/case/test/>this');
+        new DirectoryInfo('/html/case/test/>this');
     }
     
     /**
@@ -43,7 +42,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath2()
     {
-        $dir = new DirectoryInfo('/html/case/test/,this');
+        new DirectoryInfo('/html/case/test/,this');
     }
     
     /**
@@ -52,7 +51,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath3()
     {
-        $dir = new DirectoryInfo('/html/case/test/<this');
+        new DirectoryInfo('/html/case/test/<this');
     }
     
     /**
@@ -61,7 +60,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath4()
     {
-        $dir = new DirectoryInfo('/html/case/test/|this');
+        new DirectoryInfo('/html/case/test/|this');
     }
     
     /**
@@ -70,7 +69,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath5()
     {
-        $dir = new DirectoryInfo('/html/case/test\>this');
+        new DirectoryInfo('/html/case/test\>this');
     }
     
     /**
@@ -79,7 +78,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath6()
     {
-        $dir = new DirectoryInfo('/html/case/test\,this');
+        new DirectoryInfo('/html/case/test\,this');
     }
     
     /**
@@ -88,7 +87,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath7()
     {
-        $dir = new DirectoryInfo('/html/case/test\<this');
+        new DirectoryInfo('/html/case/test\<this');
     }
     
     /**
@@ -97,7 +96,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath8()
     {
-        $dir = new DirectoryInfo('/html/case/test\|this');
+        new DirectoryInfo('/html/case/test\|this');
     }
     
     /**
@@ -106,7 +105,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath9()
     {
-        $dir = new DirectoryInfo('/html/case/test>/this');
+        new DirectoryInfo('/html/case/test>/this');
     }
     
     /**
@@ -115,7 +114,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath10()
     {
-        $dir = new DirectoryInfo('/html/case/test,/this');
+        new DirectoryInfo('/html/case/test,/this');
     }
     
     /**
@@ -124,7 +123,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath11()
     {
-        $dir = new DirectoryInfo('/html/case/test</this');
+        new DirectoryInfo('/html/case/test</this');
     }
     
     /**
@@ -133,7 +132,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath12()
     {
-        $dir = new DirectoryInfo('/html/case/test|/this');
+        new DirectoryInfo('/html/case/test|/this');
     }
     
     /**
@@ -142,7 +141,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath13()
     {
-        $dir = new DirectoryInfo('/html/case/test>\this');
+        new DirectoryInfo('/html/case/test>\this');
     }
     
     /**
@@ -151,7 +150,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath14()
     {
-        $dir = new DirectoryInfo('/html/case/test,\this');
+        new DirectoryInfo('/html/case/test,\this');
     }
     
     /**
@@ -160,7 +159,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath15()
     {
-        $dir = new DirectoryInfo('/html/case/test<\this');
+        new DirectoryInfo('/html/case/test<\this');
     }
     
     /**
@@ -169,7 +168,7 @@ class DirectoryInfoTest extends TestCase
      */
     public function testDirectoryInfoConstructorWithInvalidPath16()
     {
-        $dir = new DirectoryInfo('/html/case/test|\this');
+        new DirectoryInfo('/html/case/test|\this');
     }
     
     public function testCreate()
@@ -215,7 +214,6 @@ class DirectoryInfoTest extends TestCase
         $file = new FileInfo('./tests/testdir/test.php');
         $file->create();
         $dir->delete();
-        
     }
     
     public function testDeleteRecursive()
@@ -235,7 +233,6 @@ class DirectoryInfoTest extends TestCase
         $tmp = $dir->clean();
         $this->assertTrue($tmp);
         $dir->delete();
-        
     }
     
     /**
@@ -304,7 +301,6 @@ class DirectoryInfoTest extends TestCase
     
     public function testGetFilesSearchFiles()
     {
-        //die('TEST');
         $dir = new DirectoryInfo('./tests/ActiveTest/');
         $dir->create();
         $dir2 = new DirectoryInfo('./tests/ActiveTest/dir1');
