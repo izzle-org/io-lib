@@ -361,7 +361,7 @@ class DirectoryInfo
      */
     public function setExists($exists)
     {
-        $this->exists = (bool)$exists;
+        $this->exists = (bool) $exists;
         
         return $this;
     }
@@ -382,7 +382,7 @@ class DirectoryInfo
      */
     public function setEmpty($empty)
     {
-        $this->empty = (bool)$empty;
+        $this->empty = (bool) $empty;
         
         return $this;
     }

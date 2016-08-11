@@ -366,7 +366,7 @@ class FileInfo
      */
     public function setIsReadOnly($isReadOnly)
     {
-        $this->isReadOnly = (bool)$isReadOnly;
+        $this->isReadOnly = (bool) $isReadOnly;
 
         return $this;
     }
