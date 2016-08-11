@@ -295,8 +295,7 @@ class DirectoryInfoTest extends TestCase
         $dir2 = new DirectoryInfo('./tests/test/test2');
         $dir2->create();
         $this->assertEmpty($dir->getFiles(null, true));
-        $dir2->delete();
-        $dir->delete();
+        $dir->delete(true);
     }
     
     public function testGetFilesSearchFiles()
@@ -314,11 +313,35 @@ class DirectoryInfoTest extends TestCase
         $file = new FileInfo('./tests/ActiveTest/dir1/testfile3.php');
         $file->create();
         $files = $dir->getFiles('*.php', true);
+        
         foreach ($files as $file) {
             $this->assertInstanceOf(FileInfo::class, $file);
         }
         
-        $dir2->delete(true);
         $dir->delete(true);
     }
+    
+    public function testGetDirectories()
+    {
+        $dir1= new DirectoryInfo('./tests/Active/');
+        $dir1->create();
+        $dir2 = new DirectoryInfo('./tests/Active/dir1/');
+        $dir2->create();
+        $dir3 = new DirectoryInfo('./tests/Active/dir3/');
+        $dir3->create();
+        $dir4 = new DirectoryInfo('./tests/Active/dir1/dir2');
+        $dir4->create();
+        
+        $dirs = $dir1->getDirectories();
+        
+        $dirs = $dir1->getDirectories('dirs*');
+        
+        foreach ($dirs as $dir) {
+            $this->assertInstanceOf(DirectoryInfo::class, $dir);
+        }
+        
+        $dir1->delete(true);
+    }
+    
+    
 }
