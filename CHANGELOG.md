@@ -1,3 +1,7 @@
+0.7.5
+-----
+- Adding directory hashed creation
+
 0.7.4
 -----
 - Adding more unit tests
