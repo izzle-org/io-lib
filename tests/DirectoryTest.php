@@ -3,11 +3,11 @@
 use Izzle\IO\Directory;
 use Izzle\IO\DirectoryInfo;
 use Izzle\IO\FileInfo;
+Use Izzle\IO\Path;
 use PHPUnit\Framework\TestCase;
 
 class DirectoryTest extends TestCase
 {
-    
     public function testGetCurrentDirectory_Create_NonRecursiveDelete()
     {
         Directory::create('./tests/Active');
@@ -15,6 +15,21 @@ class DirectoryTest extends TestCase
         $this->assertInstanceOf(DirectoryInfo::class, Directory::getCurrentDirectory());
         
         Directory::delete('./tests/Active');
+    }
+    
+    public function testGetCurrenDirectory_Create_Hashed_RecursiveDelete()
+    {
+        $filename = Path::combine(sys_get_temp_dir(), 'test.jpg');
+        touch($filename);
+        $file = new FileInfo($filename);
+        
+        Directory::createHashed('./tests/Active', $file);
+    
+        $this->assertInstanceOf(DirectoryInfo::class, Directory::getCurrentDirectory());
+    
+        Directory::delete('./tests/Active', true);
+        
+        unlink($filename);
     }
     
     public function testRecursiveDelete()
