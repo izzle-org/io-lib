@@ -1,3 +1,7 @@
+0.7.6
+-----
+- Added array to object and object to array data converter
+
 0.7.5
 -----
 - Adding directory hashed creation
