@@ -4,6 +4,8 @@ composer.lock
 composer-test.lock
 vendor/
 .idea/
+.phpunit.result.cache
+.DS_Store
 /tests/coverage/
 
 # Ignore binary files

@@ -1,3 +1,7 @@
+0.7.7
+-----
+- Added PHP 8 Support
+
 0.7.6
 -----
 - Added array to object and object to array data converter
