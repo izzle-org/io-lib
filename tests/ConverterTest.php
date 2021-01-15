@@ -7,8 +7,8 @@ class ConverterTest extends TestCase
 {
     public function testConvertToArray()
     {
-        $o = new \stdClass();
-        $o->child = new \stdClass();
+        $o = new stdClass();
+        $o->child = new stdClass();
         $o->child->name = 'child';
         $o->child->id = 4;
         $o->name = 'test';
@@ -16,16 +16,16 @@ class ConverterTest extends TestCase
     
         $result = DataConverter::convert($o);
         
-        $this->assertTrue(is_array($result));
-        $this->assertFalse(is_object($result));
-        $this->assertArrayHasKey('name', $result);
-        $this->assertArrayHasKey('id', $result);
-        $this->assertEquals(1, $result['id']);
-        $this->assertEquals('test', $result['name']);
-        $this->assertTrue(is_array($result['child']));
-        $this->assertFalse(is_object($result['child']));
-        $this->assertEquals(4, $result['child']['id']);
-        $this->assertEquals('child', $result['child']['name']);
+        self::assertIsArray($result);
+        self::assertIsNotObject($result);
+        self::assertArrayHasKey('name', $result);
+        self::assertArrayHasKey('id', $result);
+        self::assertEquals(1, $result['id']);
+        self::assertEquals('test', $result['name']);
+        self::assertIsArray($result['child']);
+        self::assertIsNotObject($result['child']);
+        self::assertEquals(4, $result['child']['id']);
+        self::assertEquals('child', $result['child']['name']);
     }
     
     public function testConvertToObject()
@@ -41,14 +41,21 @@ class ConverterTest extends TestCase
         
         $result = DataConverter::convert($arr);
     
-        $this->assertTrue(is_object($result));
-        $this->assertFalse(is_array($result));
-        $this->assertAttributeEquals(1, 'id', $result);
-        $this->assertAttributeEquals('test', 'name', $result);
+        self::assertIsObject($result);
+        self::assertIsNotArray($result);
+        
+        self::assertObjectHasAttribute('id', $result);
+        self::assertEquals(1, $result->id);
+        self::assertObjectHasAttribute('name', $result);
+        self::assertEquals('test', $result->name);
     
-        $this->assertTrue(is_object($result->child));
-        $this->assertFalse(is_array($result->child));
-        $this->assertAttributeEquals(4, 'id', $result->child);
-        $this->assertAttributeEquals('child', 'name', $result->child);
+        self::assertIsObject($result->child);
+        self::assertIsNotArray($result->child);
+    
+        self::assertObjectHasAttribute('child', $result);
+        self::assertObjectHasAttribute('id', $result->child);
+        self::assertEquals(4, $result->child->id);
+        self::assertObjectHasAttribute('name', $result->child);
+        self::assertEquals('child', $result->child->name);
     }
 }

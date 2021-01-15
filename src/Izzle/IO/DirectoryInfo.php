@@ -1,6 +1,7 @@
 <?php
 namespace Izzle\IO;
 
+use InvalidArgumentException;
 use Izzle\IO\Exception\ArgumentNullException;
 use Izzle\IO\Exception\DirectoryNotEmptyException;
 use Izzle\IO\Exception\DirectoryNotFoundException;
@@ -28,7 +29,7 @@ class DirectoryInfo
         }
         
         if (preg_match('/[\,\<\>\|]/', $path)) {
-            throw new \InvalidArgumentException('invalid path characters');
+            throw new InvalidArgumentException('invalid path characters');
         }
         
         $this->setFullName($path)

@@ -12,7 +12,7 @@ class DirectoryTest extends TestCase
     {
         Directory::create('./tests/Active');
         
-        $this->assertInstanceOf(DirectoryInfo::class, Directory::getCurrentDirectory());
+        self::assertInstanceOf(DirectoryInfo::class, Directory::getCurrentDirectory());
         
         Directory::delete('./tests/Active');
     }
@@ -21,11 +21,14 @@ class DirectoryTest extends TestCase
     {
         $filename = Path::combine(sys_get_temp_dir(), 'test.jpg');
         touch($filename);
-        $file = new FileInfo($filename);
-        
+        try {
+            $file = new FileInfo($filename);
+        } catch (\Izzle\IO\Exception\ArgumentNullException $e) {
+        }
+    
         Directory::createHashed('./tests/Active', $file);
     
-        $this->assertInstanceOf(DirectoryInfo::class, Directory::getCurrentDirectory());
+        self::assertInstanceOf(DirectoryInfo::class, Directory::getCurrentDirectory());
     
         Directory::delete('./tests/Active', true);
         
@@ -34,10 +37,10 @@ class DirectoryTest extends TestCase
     
     public function testRecursiveDelete()
     {
-        Directory::create('./tests/Active');
-        Directory::create('./tests/Active/dir1');
-        Directory::create('./tests/Active/dir2');
-        Directory::delete('./tests/Active', true);
+        self::assertTrue(Directory::create('./tests/Active'));
+        self::assertTrue(Directory::create('./tests/Active/dir1'));
+        self::assertTrue(Directory::create('./tests/Active/dir2'));
+        self::assertTrue(Directory::delete('./tests/Active', true));
     }
     
     public function testClean()
@@ -46,15 +49,15 @@ class DirectoryTest extends TestCase
         Directory::create('./tests/Active/dir1');
         Directory::create('./tests/Active/dir2');
         $tmp = Directory::clean('./tests/Active');
-        $this->assertTrue($tmp);
+        self::assertTrue($tmp);
         Directory::delete('./tests/Active');
     }
     
     public function testExists()
     {
         Directory::create('./tests/Active');
-        $this->assertTrue(Directory::exists('./tests/Active'));
-        $this->assertFalse(Directory::exists('./tests/Active2'));
+        self::assertTrue(Directory::exists('./tests/Active'));
+        self::assertFalse(Directory::exists('./tests/Active2'));
         Directory::delete('./tests/Active');
     }
     
@@ -63,7 +66,7 @@ class DirectoryTest extends TestCase
         Directory::create('./tests/Active1');
         Directory::create('./tests/Active2');
         Directory::create('./tests/Active1/DIR');
-        $this->assertTrue(Directory::move('./tests/Active1/DIR', './tests/Active2/DIR'));
+        self::assertTrue(Directory::move('./tests/Active1/DIR', './tests/Active2/DIR'));
         Directory::delete('./tests/Active1');
         Directory::delete('./tests/Active2', true);
     }
@@ -71,7 +74,7 @@ class DirectoryTest extends TestCase
     public function testRename()
     {
         Directory::create('./tests/Active1');
-        $this->assertTrue(Directory::rename('./tests/Active1', 'Active2'));
+        self::assertTrue(Directory::rename('./tests/Active1', 'Active2'));
         Directory::delete('./tests/Active2');
     }
     
@@ -91,23 +94,23 @@ class DirectoryTest extends TestCase
         $files = Directory::getFiles('./tests/Active');
         
         foreach ($files as $file) {
-            $this->assertInstanceOf(FileInfo::class, $file);
+            self::assertInstanceOf(FileInfo::class, $file);
         }
         
         //with search
         $files = Directory::getFiles('./tests/Active', '*.html');
-        $this->assertEquals(2, count($files));
+        self::assertCount(2, $files);
         
         foreach ($files as $file) {
-            $this->assertInstanceOf(FileInfo::class, $file);
+            self::assertInstanceOf(FileInfo::class, $file);
         }
         
         //with search + recursive
         $files = Directory::getFiles('./tests/Active', '*.html', true);
-        $this->assertEquals(3, count($files));
+        self::assertCount(3, $files);
         
         foreach ($files as $file) {
-            $this->assertInstanceOf(FileInfo::class, $file);
+            self::assertInstanceOf(FileInfo::class, $file);
         }
         
         Directory::delete('./tests/Active', true);
@@ -122,18 +125,18 @@ class DirectoryTest extends TestCase
         Directory::create('./tests/Active/ERROR');
         
         $dirs = Directory::getDirectories('./tests/Active');
-        $this->assertEquals(4, count($dirs));
+        self::assertCount(4, $dirs);
         
         foreach ($dirs as $dir) {
-            $this->assertInstanceOf(DirectoryInfo::class, $dir);
+            self::assertInstanceOf(DirectoryInfo::class, $dir);
         }
         
         //with search
         $dirs = Directory::getDirectories('./tests/Active', 'Subfold*');
-        $this->assertEquals(3, count($dirs));
+        self::assertCount(3, $dirs);
         
         foreach ($dirs as $dir) {
-            $this->assertInstanceOf(DirectoryInfo::class, $dir);
+            self::assertInstanceOf(DirectoryInfo::class, $dir);
         }
         
         Directory::delete('./tests/Active', true);
