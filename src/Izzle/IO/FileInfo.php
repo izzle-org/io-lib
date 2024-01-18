@@ -1,35 +1,33 @@
 <?php
 namespace Izzle\IO;
 
+use DateTime;
+use Exception;
+use InvalidArgumentException;
 use Izzle\IO\Exception\FileNotFoundException;
-use Izzle\IO\Exception\ArgumentNullException;
 
 class FileInfo
 {
-    protected $fullName;
-    protected $name;
-    protected $extension;
-    protected $length;
-    protected $changed;
-    protected $accessed;
-    protected $content;
-    protected $directory;
-    protected $exists;
-    protected $isReadOnly;
+    protected string $fullName;
+    protected string $name;
+    protected string $extension;
+    protected int $length;
+    protected ?DateTime $changed = null;
+    protected ?DateTime $accessed = null;
+    protected ?string $content = null;
+    protected ?DirectoryInfo $directory = null;
+    protected bool $exists;
+    protected bool $isReadOnly;
 
     /**
-     * @param $path
+     * @param string $path
      * @param bool|true $directory
-     * @throws ArgumentNullException
+     * @throws Exception
      */
-    public function __construct($path, $directory = true)
+    public function __construct(string $path, bool $directory = true)
     {
-        if ($path === null) {
-            throw new ArgumentNullException('path is null');
-        }
-
         if (preg_match('/[\,\<\>\|]/', $path)) {
-            throw new \InvalidArgumentException('invalid path characters');
+            throw new InvalidArgumentException('invalid path characters');
         }
 
         $this->setFullName($path)
@@ -48,8 +46,9 @@ class FileInfo
 
     /**
      * @return bool
+     * @throws Exception
      */
-    public function create()
+    public function create(): bool
     {
         if (!$this->exists) {
             if ($this->exists = touch($this->fullName)) {
@@ -66,23 +65,23 @@ class FileInfo
      * @return bool
      * @throws FileNotFoundException
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->exists) {
             return unlink($this->fullName);
-        } else {
-            throw new FileNotFoundException("file '{$this->fullName}' not found");
         }
+
+        throw new FileNotFoundException("file '{$this->fullName}' not found");
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      * @throws FileNotFoundException
      */
-    public function rename($name)
+    public function rename(string $name): bool
     {
-        if ($this->exists) {
+        if ($this->exists && $this->getDirectory() !== null) {
             $newPath = Path::combine($this->getDirectory()->getFullName(), $name);
             if (rename($this->fullName, $newPath)) {
                 $this->name = $name;
@@ -92,17 +91,17 @@ class FileInfo
             }
 
             return false;
-        } else {
-            throw new FileNotFoundException("file '{$this->fullName}' not found");
         }
+
+        throw new FileNotFoundException("file '{$this->fullName}' not found");
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      * @throws FileNotFoundException
      */
-    public function move($name)
+    public function move(string $name): bool
     {
         if ($this->exists) {
             if (rename($this->fullName, $name)) {
@@ -113,21 +112,24 @@ class FileInfo
             }
 
             return false;
-        } else {
-            throw new FileNotFoundException("file '{$this->fullName}' not found");
         }
+
+        throw new FileNotFoundException("file '{$this->fullName}' not found");
     }
 
-    protected function getInfos()
+    /**
+     * @throws Exception
+     */
+    protected function getInfos(): void
     {
         if ($this->exists) {
             $this->setFullName($this->fullName)
                 ->setIsReadOnly(!is_readable($this->fullName));
 
             $fileStats = stat($this->fullName);
-            $this->setLength($fileStats[7]);
-            $this->changed = new \DateTime('@' . $fileStats[9]);
-            $this->accessed = new \DateTime('@' . $fileStats[8]);
+            $this->setLength($fileStats['size']);
+            $this->changed = new DateTime('@' . $fileStats['mtime']);
+            $this->accessed = new DateTime('@' . $fileStats['atime']);
         }
     }
 
@@ -136,7 +138,7 @@ class FileInfo
      *
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return sprintf('%s.%s', $this->name, $this->extension);
     }
@@ -146,7 +148,7 @@ class FileInfo
      *
      * @return string
      */
-    public function getFullName()
+    public function getFullName(): string
     {
         return $this->fullName;
     }
@@ -158,7 +160,7 @@ class FileInfo
      *
      * @return self
      */
-    public function setFullName($fullName)
+    public function setFullName(string $fullName): self
     {
         $this->fullName = $fullName;
 
@@ -170,7 +172,7 @@ class FileInfo
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -182,7 +184,7 @@ class FileInfo
      *
      * @return self
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -194,7 +196,7 @@ class FileInfo
      *
      * @return string
      */
-    public function getExtension()
+    public function getExtension(): string
     {
         return $this->extension;
     }
@@ -206,7 +208,7 @@ class FileInfo
      *
      * @return self
      */
-    public function setExtension($extension)
+    public function setExtension(string $extension): self
     {
         $this->extension = $extension;
 
@@ -218,7 +220,7 @@ class FileInfo
      *
      * @return int
      */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
@@ -230,9 +232,9 @@ class FileInfo
      *
      * @return self
      */
-    public function setLength($length)
+    public function setLength(int $length): self
     {
-        $this->length = (int) $length;
+        $this->length = $length;
 
         return $this;
     }
@@ -240,9 +242,9 @@ class FileInfo
     /**
      * Gets the value of changed.
      *
-     * @return \DateTime
+     * @return DateTime|null
      */
-    public function getChanged()
+    public function getChanged(): ?DateTime
     {
         return $this->changed;
     }
@@ -250,9 +252,9 @@ class FileInfo
     /**
      * Gets the value of accessed.
      *
-     * @return \DateTime
+     * @return DateTime|null
      */
-    public function getAccessed()
+    public function getAccessed(): ?DateTime
     {
         return $this->accessed;
     }
@@ -260,9 +262,9 @@ class FileInfo
     /**
      * Gets the value of content.
      *
-     * @return string
+     * @return string|null
      */
-    public function getContent()
+    public function getContent(): ?string
     {
         if ($this->exists && $this->content === null) {
             $this->content = file_get_contents($this->fullName);
@@ -278,7 +280,7 @@ class FileInfo
      *
      * @return self
      */
-    public function setContent($content)
+    public function setContent(string $content): self
     {
         $this->content = $content;
 
@@ -288,12 +290,12 @@ class FileInfo
     /**
      * Writes content data to file
      *
-     * @return bool / int
+     * @return bool
      */
-    public function write()
+    public function write(): bool
     {
-        if ($this->exists && $this->content !== null) {
-            return file_put_contents($this->fullName, $this->content);
+        if ($this->exists) {
+            return file_put_contents($this->fullName, $this->content) !== false;
         }
 
         return false;
@@ -302,9 +304,9 @@ class FileInfo
     /**
      * Gets the value of directory.
      *
-     * @return DirectoryInfo
+     * @return DirectoryInfo|null
      */
-    public function getDirectory()
+    public function getDirectory(): ?DirectoryInfo
     {
         return $this->directory;
     }
@@ -316,7 +318,7 @@ class FileInfo
      *
      * @return self
      */
-    public function setDirectory(DirectoryInfo $directory)
+    public function setDirectory(DirectoryInfo $directory): self
     {
         $this->directory = $directory;
 
@@ -328,7 +330,7 @@ class FileInfo
      *
      * @return bool
      */
-    public function getExists()
+    public function getExists(): bool
     {
         return $this->exists;
     }
@@ -340,9 +342,9 @@ class FileInfo
      *
      * @return self
      */
-    public function setExists($exists)
+    public function setExists(bool $exists): self
     {
-        $this->exists = (bool) $exists;
+        $this->exists = $exists;
 
         return $this;
     }
@@ -352,7 +354,7 @@ class FileInfo
      *
      * @return bool
      */
-    public function getIsReadOnly()
+    public function getIsReadOnly(): bool
     {
         return $this->isReadOnly;
     }
@@ -364,9 +366,9 @@ class FileInfo
      *
      * @return self
      */
-    public function setIsReadOnly($isReadOnly)
+    public function setIsReadOnly(bool $isReadOnly): self
     {
-        $this->isReadOnly = (bool) $isReadOnly;
+        $this->isReadOnly = $isReadOnly;
 
         return $this;
     }

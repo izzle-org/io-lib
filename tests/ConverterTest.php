@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class ConverterTest extends TestCase
 {
-    public function testConvertToArray()
+    public function testConvertToArray(): void
     {
         $o = new stdClass();
         $o->child = new stdClass();
@@ -28,7 +28,7 @@ class ConverterTest extends TestCase
         self::assertEquals('child', $result['child']['name']);
     }
     
-    public function testConvertToObject()
+    public function testConvertToObject(): void
     {
         $arr = [
             'name' => 'test',
@@ -44,18 +44,18 @@ class ConverterTest extends TestCase
         self::assertIsObject($result);
         self::assertIsNotArray($result);
         
-        self::assertObjectHasAttribute('id', $result);
+        self::assertObjectHasProperty('id', $result);
         self::assertEquals(1, $result->id);
-        self::assertObjectHasAttribute('name', $result);
+        self::assertObjectHasProperty('name', $result);
         self::assertEquals('test', $result->name);
     
         self::assertIsObject($result->child);
         self::assertIsNotArray($result->child);
     
-        self::assertObjectHasAttribute('child', $result);
-        self::assertObjectHasAttribute('id', $result->child);
+        self::assertObjectHasProperty('child', $result);
+        self::assertObjectHasProperty('id', $result->child);
         self::assertEquals(4, $result->child->id);
-        self::assertObjectHasAttribute('name', $result->child);
+        self::assertObjectHasProperty('name', $result->child);
         self::assertEquals('child', $result->child->name);
     }
 }

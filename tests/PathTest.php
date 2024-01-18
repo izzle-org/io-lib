@@ -217,6 +217,6 @@ class PathTest extends TestCase
     public function testCombineWrongInputType()
     {
         $this->expectException(InvalidArgumentException::class);
-        $tmp = Path::combine();
+        Path::combine();
     }
 }

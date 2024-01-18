@@ -8,145 +8,143 @@ use PHPUnit\Framework\TestCase;
 
 class DirectoryInfoTest extends TestCase
 {
-    public function testDirectoryInfoConstructorWithFullpath()
+    public function testParentIsInitialized(): void
+    {
+        self::assertNull((new DirectoryInfo('/html/case/test/this'))->getParent());
+    }
+
+    public function testDirectoryInfoConstructorWithFullpath(): void
     {
         $dir = new DirectoryInfo('/html/case/test/this');
         self::assertInstanceOf(DirectoryInfo::class, $dir);
     }
     
-    public function testDirectoryInfoConstructorWithFullpathAndSecondParam()
+    public function testDirectoryInfoConstructorWithFullpathAndSecondParam(): void
     {
         $dir = new DirectoryInfo('/html/case/test/this', false);
         self::assertInstanceOf(DirectoryInfo::class, $dir);
     }
     
-    public function testDirectoryInfoConstructorWithNoPath()
-    {
-        $this->expectExceptionMessage("path is null");
-        $this->expectException(Izzle\IO\Exception\ArgumentNullException::class);
-        new DirectoryInfo(null);
-    }
-    
-    public function testDirectoryInfoConstructorWithInvalidPath1()
+    public function testDirectoryInfoConstructorWithInvalidPath1(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test/>this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath2()
+    public function testDirectoryInfoConstructorWithInvalidPath2(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test/,this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath3()
+    public function testDirectoryInfoConstructorWithInvalidPath3(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test/<this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath4()
+    public function testDirectoryInfoConstructorWithInvalidPath4(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test/|this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath5()
+    public function testDirectoryInfoConstructorWithInvalidPath5(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test\>this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath6()
+    public function testDirectoryInfoConstructorWithInvalidPath6(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test\,this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath7()
+    public function testDirectoryInfoConstructorWithInvalidPath7(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test\<this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath8()
+    public function testDirectoryInfoConstructorWithInvalidPath8(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test\|this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath9()
+    public function testDirectoryInfoConstructorWithInvalidPath9(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test>/this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath10()
+    public function testDirectoryInfoConstructorWithInvalidPath10(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test,/this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath11()
+    public function testDirectoryInfoConstructorWithInvalidPath11(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test</this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath12()
+    public function testDirectoryInfoConstructorWithInvalidPath12(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test|/this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath13()
+    public function testDirectoryInfoConstructorWithInvalidPath13(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test>\this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath14()
+    public function testDirectoryInfoConstructorWithInvalidPath14(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test,\this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath15()
+    public function testDirectoryInfoConstructorWithInvalidPath15(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test<\this');
     }
     
-    public function testDirectoryInfoConstructorWithInvalidPath16()
+    public function testDirectoryInfoConstructorWithInvalidPath16(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
         new DirectoryInfo('/html/case/test|\this');
     }
     
-    public function testCreate()
+    public function testCreate(): void
     {
         $dir = new DirectoryInfo('./tests/testdir');
         $dir->create();
         self::assertTrue($dir->getExists());
     }
     
-    public function testCreate2ndTime()
+    public function testCreate2ndTime(): void
     {
         $dir = new DirectoryInfo('./tests/testdir');
         $tmp = $dir->create();
@@ -154,7 +152,7 @@ class DirectoryInfoTest extends TestCase
         self::assertTrue($tmp);
     }
     
-    public function testDelete()
+    public function testDelete(): void
     {
         $dir = new DirectoryInfo('./tests/testdir');
         self::assertTrue($dir->getExists());
@@ -165,15 +163,22 @@ class DirectoryInfoTest extends TestCase
         }
         self::assertFalse($dir->getExists());
     }
-    
-    public function testDelete2ndTime()
+
+    /**
+     * @throws DirectoryNotEmptyException
+     */
+    public function testDelete2ndTime(): void
     {
         $this->expectException(Izzle\IO\Exception\DirectoryNotFoundException::class);
         $dir = new DirectoryInfo('./tests/testdir');
         self::assertFalse($dir->delete());
     }
-    
-    public function testDeleteWithFileInDirectory()
+
+    /**
+     * @throws DirectoryNotFoundException
+     * @throws Exception
+     */
+    public function testDeleteWithFileInDirectory(): void
     {
         $this->expectExceptionMessage("Directory not empty");
         $this->expectException(Izzle\IO\Exception\DirectoryNotEmptyException::class);
@@ -183,8 +188,11 @@ class DirectoryInfoTest extends TestCase
         $file->create();
         $dir->delete();
     }
-    
-    public function testDeleteRecursive()
+
+    /**
+     * @throws Exception
+     */
+    public function testDeleteRecursive(): void
     {
         $dir = new DirectoryInfo('./tests/testdir');
         $file = new FileInfo('./tests/testdir/test.php');
@@ -195,8 +203,11 @@ class DirectoryInfoTest extends TestCase
         } catch (DirectoryNotFoundException $e) {
         }
     }
-    
-    public function testClean()
+
+    /**
+     * @throws Exception
+     */
+    public function testClean(): void
     {
         $dir = new DirectoryInfo('./tests/testdir');
         $dir->create();
@@ -214,14 +225,14 @@ class DirectoryInfoTest extends TestCase
         }
     }
     
-    public function testCleanWithNonExistingDir()
+    public function testCleanWithNonExistingDir(): void
     {
         $this->expectException(Izzle\IO\Exception\DirectoryNotFoundException::class);
         $dir = new DirectoryInfo('./tests/testdir');
         $dir->clean();
     }
     
-    public function testMove()
+    public function testMove(): void
     {
         $dir = new DirectoryInfo('./tests/test/');
         $dir->create();
@@ -237,14 +248,14 @@ class DirectoryInfoTest extends TestCase
         }
     }
     
-    public function testMoveWithNonExistingDir()
+    public function testMoveWithNonExistingDir(): void
     {
         $this->expectException(Izzle\IO\Exception\DirectoryNotFoundException::class);
         $dir = new DirectoryInfo('./tests/test/');
         $dir->move('./tests/test2/');
     }
     
-    public function testRename()
+    public function testRename(): void
     {
         $dir = new DirectoryInfo('./tests/test/');
         $dir->create();
@@ -260,14 +271,17 @@ class DirectoryInfoTest extends TestCase
         }
     }
     
-    public function testRenameWithNonExistingDir()
+    public function testRenameWithNonExistingDir(): void
     {
         $this->expectException(Izzle\IO\Exception\DirectoryNotFoundException::class);
         $dir = new DirectoryInfo('./tests/test/');
         $dir->rename('test2');
     }
-    
-    public function testGetFilesEmptyResult()
+
+    /**
+     * @throws \Izzle\IO\Exception\ArgumentNullException
+     */
+    public function testGetFilesEmptyResult(): void
     {
         $dir = new DirectoryInfo('./tests/test/');
         $dir->create();
@@ -278,8 +292,11 @@ class DirectoryInfoTest extends TestCase
         } catch (DirectoryNotFoundException $e) {
         }
     }
-    
-    public function testGetFilesRecursiveEmptyResult()
+
+    /**
+     * @throws \Izzle\IO\Exception\ArgumentNullException
+     */
+    public function testGetFilesRecursiveEmptyResult(): void
     {
         $dir = new DirectoryInfo('./tests/test/');
         $dir->create();
@@ -292,8 +309,11 @@ class DirectoryInfoTest extends TestCase
         } catch (DirectoryNotFoundException $e) {
         }
     }
-    
-    public function testGetFilesSearchFiles()
+
+    /**
+     * @throws \Izzle\IO\Exception\ArgumentNullException
+     */
+    public function testGetFilesSearchFiles(): void
     {
         $dir = new DirectoryInfo('./tests/ActiveTest/');
         $dir->create();
@@ -320,7 +340,7 @@ class DirectoryInfoTest extends TestCase
         }
     }
     
-    public function testGetDirectories()
+    public function testGetDirectories(): void
     {
         $dir1= new DirectoryInfo('./tests/Active/');
         $dir1->create();
@@ -330,8 +350,6 @@ class DirectoryInfoTest extends TestCase
         $dir3->create();
         $dir4 = new DirectoryInfo('./tests/Active/dir1/dir2');
         $dir4->create();
-        
-        $dirs = $dir1->getDirectories();
         
         $dirs = $dir1->getDirectories('dirs*');
         

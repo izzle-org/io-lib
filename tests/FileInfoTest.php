@@ -7,166 +7,162 @@ use PHPUnit\Framework\TestCase;
 
 class FileInfoTest extends TestCase
 {
-    public function testFileInfoConstructorWithFullpath()
+    public function testAllPropertiesAreInitiated(): void
+    {
+        $file = new FileInfo('/html/case/test/this/homepage.xml', false);
+        self::assertNull($file->getAccessed());
+        self::assertNull($file->getChanged());
+        self::assertNull($file->getDirectory());
+        self::assertNull($file->getContent());
+    }
+
+    public function testFileInfoConstructorWithFullpath(): void
     {
         $file = new FileInfo('/html/case/test/this/homepage.xml');
         self::assertInstanceOf(FileInfo::class, $file);
     }
     
-    public function testFileInfoConstructorWithFullpathAndSecondParam()
+    public function testFileInfoConstructorWithFullpathAndSecondParam(): void
     {
         $file = new FileInfo('/html/case/test/this/homepage.xml', false);
         self::assertInstanceOf(FileInfo::class, $file);
     }
     
-    public function testFileInfoConstructorWithNoDirectoryAndSecondParam()
+    public function testFileInfoConstructorWithNoDirectoryAndSecondParam(): void
     {
         $file = new FileInfo('homepage.xml', false);
         self::assertInstanceOf(FileInfo::class, $file);
     }
     
-    public function testFileInfoConstructorWithNoDirectory()
+    public function testFileInfoConstructorWithNoDirectory(): void
     {
         $file = new FileInfo('homepage.xml');
         self::assertInstanceOf(FileInfo::class, $file);
     }
     
-    public function testFileInfoConstructorWithNoPath()
-    {
-        $this->expectExceptionMessage("path is null");
-        $this->expectException(Izzle\IO\Exception\ArgumentNullException::class);
-        $file = new FileInfo(null);
-    }
-    
-    public function testFileInfoConstructorWithInvalidPath1()
+    public function testFileInfoConstructorWithInvalidPath1(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test/>this/homepage.xml');
+        new FileInfo('/html/case/test/>this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath2()
+    public function testFileInfoConstructorWithInvalidPath2(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test/,this/homepage.xml');
+        new FileInfo('/html/case/test/,this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath3()
+    public function testFileInfoConstructorWithInvalidPath3(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test/<this/homepage.xml');
+        new FileInfo('/html/case/test/<this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath4()
+    public function testFileInfoConstructorWithInvalidPath4(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test/|this/homepage.xml');
+        new FileInfo('/html/case/test/|this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath5()
+    public function testFileInfoConstructorWithInvalidPath5(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test\>this/homepage.xml');
+        new FileInfo('/html/case/test\>this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath6()
+    public function testFileInfoConstructorWithInvalidPath6(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test\,this/homepage.xml');
+        new FileInfo('/html/case/test\,this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath7()
+    public function testFileInfoConstructorWithInvalidPath7(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test\<this/homepage.xml');
+        new FileInfo('/html/case/test\<this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath8()
+    public function testFileInfoConstructorWithInvalidPath8(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test\|this/homepage.xml');
+        new FileInfo('/html/case/test\|this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath9()
+    public function testFileInfoConstructorWithInvalidPath9(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test>/this/homepage.xml');
+        new FileInfo('/html/case/test>/this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath10()
+    public function testFileInfoConstructorWithInvalidPath10(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test,/this/homepage.xml');
+        new FileInfo('/html/case/test,/this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath11()
+    public function testFileInfoConstructorWithInvalidPath11(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test</this/homepage.xml');
+        new FileInfo('/html/case/test</this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath12()
+    public function testFileInfoConstructorWithInvalidPath12(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test|/this/homepage.xml');
+        new FileInfo('/html/case/test|/this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath13()
+    public function testFileInfoConstructorWithInvalidPath13(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test>\this/homepage.xml');
+        new FileInfo('/html/case/test>\this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath14()
+    public function testFileInfoConstructorWithInvalidPath14(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test,\this/homepage.xml');
+        new FileInfo('/html/case/test,\this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath15()
+    public function testFileInfoConstructorWithInvalidPath15(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test<\this/homepage.xml');
+        new FileInfo('/html/case/test<\this/homepage.xml');
     }
     
-    public function testFileInfoConstructorWithInvalidPath16()
+    public function testFileInfoConstructorWithInvalidPath16(): void
     {
         $this->expectExceptionMessage("invalid path characters");
         $this->expectException(InvalidArgumentException::class);
-        $file = new FileInfo('/html/case/test|\this/homepage.xml');
+        new FileInfo('/html/case/test|\this/homepage.xml');
     }
-    
-    public function testCreate()
+
+    /**
+     * @throws Exception
+     */
+    public function testCreate(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
         self::assertFileExists('./tests/test.php');
     }
     
-    /*
-    public function testCreateWrongDirectory()
-    {
-        $file = new FileInfo('./public/test.php');
-        $file->create();
-        $this->assertFileExists('./public/test.php');
-    }
-   */
-    
-    public function testDelete()
+    public function testDelete(): void
     {
         $file = new FileInfo('./tests/test.php');
         try {
@@ -175,14 +171,17 @@ class FileInfoTest extends TestCase
         }
     }
     
-    public function testDelete2ndTime()
+    public function testDelete2ndTime(): void
     {
         $this->expectException(Izzle\IO\Exception\FileNotFoundException::class);
         $file = new FileInfo('./tests/test.php');
         $file->delete();
     }
-    
-    public function testRename()
+
+    /**
+     * @throws Exception
+     */
+    public function testRename(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -197,14 +196,17 @@ class FileInfoTest extends TestCase
         }
     }
     
-    public function testRenameWithNonExistingFile()
+    public function testRenameWithNonExistingFile(): void
     {
         $this->expectException(Izzle\IO\Exception\FileNotFoundException::class);
         $file = new FileInfo('./tests/test.php');
         $file->rename('testNR2.php');
     }
-    
-    public function testMove()
+
+    /**
+     * @throws Exception
+     */
+    public function testMove(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -219,14 +221,17 @@ class FileInfoTest extends TestCase
         }
     }
     
-    public function testMoveWithNonExistingFile()
+    public function testMoveWithNonExistingFile(): void
     {
         $this->expectException(Izzle\IO\Exception\FileNotFoundException::class);
         $file = new FileInfo('./tests/test.php');
         $file->move('./tests/testNR2.php');
     }
-    
-    public function testGetFilename()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetFilename(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -236,8 +241,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetFullName()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetFullName(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -247,8 +255,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetName()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetName(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -258,8 +269,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testSetName()
+
+    /**
+     * @throws Exception
+     */
+    public function testSetName(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -270,8 +284,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetExtension()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetExtension(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -281,8 +298,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetExtensionWithNoExtension()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetExtensionWithNoExtension(): void
     {
         $file = new FileInfo('./tests/test');
         $file->create();
@@ -292,8 +312,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testSetExtension()
+
+    /**
+     * @throws Exception
+     */
+    public function testSetExtension(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -305,13 +328,16 @@ class FileInfoTest extends TestCase
         }
     }
     
-    public function testGetLength()
+    public function testGetLength(): void
     {
         $file = new FileInfo('./tests/PathTest.php');
         self::assertGreaterThan(0, $file->getLength());
     }
-    
-    public function testSetLength()
+
+    /**
+     * @throws Exception
+     */
+    public function testSetLength(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -322,8 +348,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetChanged()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetChanged(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -333,8 +362,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetAccessed()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetAccessed(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -345,13 +377,16 @@ class FileInfoTest extends TestCase
         }
     }
     
-    public function testGetContent()
+    public function testGetContent(): void
     {
         $file = new FileInfo('./tests/PathTest.php');
         self::assertGreaterThan(0, strlen($file->getContent()));
     }
-    
-    public function testSetContent()
+
+    /**
+     * @throws Exception
+     */
+    public function testSetContent(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -362,37 +397,47 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testWriteContent()
+
+    /**
+     * @throws Exception
+     */
+    public function testWriteContent(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
         $file->setContent('Hello World!');
         $file->write();
         unset($file);
+
         $file = new FileInfo('./tests/test.php');
         self::assertEquals('Hello World!', $file->getContent());
+
         try {
             $file->delete();
         } catch (FileNotFoundException $e) {
         }
     }
     
-    public function testWriteContentIfFileNonExists()
+    public function testWriteContentIfFileNonExists(): void
     {
         $file = new FileInfo('./tests/test.php');
+
+        try {
+            $file->delete();
+        } catch (FileNotFoundException $e){}
+
         $file->setContent('Hello World 2!');
         $file->write();
         self::assertFalse($file->write());
     }
     
-    public function testGetDirectory()
+    public function testGetDirectory(): void
     {
         $file = new FileInfo('./tests/test.php');
         self::assertInstanceOf(DirectoryInfo::class, $file->getDirectory());
     }
     
-    public function testSetDirectory()
+    public function testSetDirectory(): void
     {
         $file = new FileInfo('./tests/test.php');
         $dir = new DirectoryInfo('./tests/new');
@@ -400,8 +445,11 @@ class FileInfoTest extends TestCase
         $newDir = $file->getDirectory();
         self::assertEquals('new', $newDir->getName());
     }
-    
-    public function testGetExists()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetExists(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -412,20 +460,20 @@ class FileInfoTest extends TestCase
         }
     }
     
-    public function testGetExistsWithNonExistingFile()
+    public function testGetExistsWithNonExistingFile(): void
     {
         $file = new FileInfo('./tests/test.php');
         self::assertFalse($file->getExists());
     }
     
-    public function testSetExists()
+    public function testSetExists(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->setExists(true);
         self::assertTrue($file->getExists());
     }
     
-    public function testUnsetExistsAndDelete()
+    public function testUnsetExistsAndDelete(): void
     {
         $this->expectException(Izzle\IO\Exception\FileNotFoundException::class);
         $file = new FileInfo('./tests/test.php');
@@ -434,8 +482,11 @@ class FileInfoTest extends TestCase
         self::assertFalse($file->getExists());
         $file->delete();
     }
-    
-    public function testUnsetExistsAndSetAndDelete()
+
+    /**
+     * @throws Exception
+     */
+    public function testUnsetExistsAndSetAndDelete(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -448,8 +499,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testGetIsReadOnly()
+
+    /**
+     * @throws Exception
+     */
+    public function testGetIsReadOnly(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
@@ -459,8 +513,11 @@ class FileInfoTest extends TestCase
         } catch (FileNotFoundException $e) {
         }
     }
-    
-    public function testSetIsReadOnly()
+
+    /**
+     * @throws Exception
+     */
+    public function testSetIsReadOnly(): void
     {
         $file = new FileInfo('./tests/test.php');
         $file->create();
