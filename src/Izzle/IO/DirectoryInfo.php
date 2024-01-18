@@ -1,32 +1,32 @@
 <?php
 namespace Izzle\IO;
 
+use Exception;
+use FilesystemIterator;
 use InvalidArgumentException;
 use Izzle\IO\Exception\ArgumentNullException;
 use Izzle\IO\Exception\DirectoryNotEmptyException;
 use Izzle\IO\Exception\DirectoryNotFoundException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class DirectoryInfo
 {
-    protected $fullName;
-    protected $name;
-    protected $parent;
-    protected $exists;
-    protected $empty;
-    protected $loadParent;
+    protected string $fullName;
+    protected string $name;
+    protected ?DirectoryInfo $parent = null;
+    protected bool $exists;
+    protected bool $empty;
+    protected bool $loadParent;
     
     /**
-     * @param $path
+     * @param string $path
      * @param bool|true $parent
-     * @throws ArgumentNullException
+     * @throws InvalidArgumentException
      */
-    public function __construct($path, $parent = true)
+    public function __construct(string $path, bool $parent = true)
     {
         $this->loadParent = $parent;
-        
-        if ($path === null) {
-            throw new ArgumentNullException('path is null');
-        }
         
         if (preg_match('/[\,\<\>\|]/', $path)) {
             throw new InvalidArgumentException('invalid path characters');
@@ -43,7 +43,7 @@ class DirectoryInfo
     /**
      * @return bool
      */
-    public function create()
+    public function create(): bool
     {
         if (!$this->exists) {
             if ($this->exists = mkdir($this->fullName, 0777, true)) {
@@ -62,7 +62,7 @@ class DirectoryInfo
      * @throws DirectoryNotEmptyException
      * @throws DirectoryNotFoundException
      */
-    public function delete($recursive = false)
+    public function delete(bool $recursive = false): bool
     {
         if (!$this->exists) {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
@@ -70,18 +70,20 @@ class DirectoryInfo
     
         $this->setEmpty($this->isEmpty());
         
-        if (!$this->getEmpty() && !$recursive) {
+        if (!$recursive && !$this->getEmpty()) {
             throw new DirectoryNotEmptyException("Directory not empty");
         }
         
         $this->setExists(false);
-        
+
         if ($this->empty) {
             return rmdir($this->fullName);
-        } elseif ($recursive) {
+        }
+
+        if ($recursive) {
             return $this->deleteRecursively();
         }
-        
+
         return false;
     }
     
@@ -89,24 +91,24 @@ class DirectoryInfo
      * @return bool
      * @throws DirectoryNotFoundException
      */
-    public function clean()
+    public function clean(): bool
     {
         if ($this->exists) {
             $result = $this->cleanRecursively();
             $this->setEmpty($result);
             
             return $result;
-        } else {
-            throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
         }
+
+        throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
     }
     
     /**
-     * @param $destPath
+     * @param string $destPath
      * @return bool
      * @throws DirectoryNotFoundException
      */
-    public function move($destPath)
+    public function move(string $destPath): bool
     {
         if (!$this->exists) {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
@@ -121,13 +123,13 @@ class DirectoryInfo
         
         return false;
     }
-    
+
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      * @throws DirectoryNotFoundException
      */
-    public function rename($name)
+    public function rename(string $name): bool
     {
         if (!$this->exists) {
             throw new DirectoryNotFoundException("directory '{$this->fullName}' not found");
@@ -143,16 +145,19 @@ class DirectoryInfo
         
         return false;
     }
-    
+
     /**
-     * @param null $search
+     * @param string|null $search
      * @param bool|false $recursive
      * @return array
+     * @throws ArgumentNullException
+     * @throws Exception
+     * @throws Exception
      */
-    public function getFiles($search = null, $recursive = false)
+    public function getFiles(string $search = null, bool $recursive = false): array
     {
         $fileInfos = [];
-        $search = ($search === null) ? '*' : $search;
+        $search = $search ?? '*';
         if ($recursive) {
             $this->getFilesRecursively($this->fullName, $search, $fileInfos);
         } else {
@@ -165,13 +170,16 @@ class DirectoryInfo
         
         return $fileInfos;
     }
-    
+
     /**
-     * @param $fullName
-     * @param $search
-     * @param $fileInfos
+     * @param string $fullName
+     * @param string $search
+     * @param array $fileInfos
+     * @throws ArgumentNullException
+     * @throws Exception
+     * @throws Exception
      */
-    protected function getFilesRecursively($fullName, $search, &$fileInfos)
+    protected function getFilesRecursively(string $fullName, string $search, array &$fileInfos): void
     {
         foreach (glob(Path::combine($fullName, '*'), GLOB_ONLYDIR) as $dir) {
             $this->getFilesRecursively($dir, $search, $fileInfos);
@@ -183,15 +191,15 @@ class DirectoryInfo
             }
         }
     }
-    
+
     /**
-     * @param null $search
+     * @param string|null $search
      * @return array
      */
-    public function getDirectories($search = null)
+    public function getDirectories(string $search = null): array
     {
         $directoryInfos = [];
-        $search = ($search === null) ? '*' : $search;
+        $search = $search ?? '*';
         foreach (glob(Path::combine($this->fullName, $search), GLOB_ONLYDIR) as $dir) {
             $directoryInfos[] = new self($dir);
         }
@@ -202,23 +210,23 @@ class DirectoryInfo
     /**
      * @return bool
      */
-    protected function deleteRecursively()
+    protected function deleteRecursively(): bool
     {
         if (class_exists('RecursiveDirectoryIterator') && class_exists('RecursiveIteratorIterator')) {
             return $this->deleteRecursivelySpl();
-        } else {
-            return $this->deleteRecursivelyWithoutSpl($this->fullName);
         }
+
+        return $this->deleteRecursivelyWithoutSpl($this->fullName);
     }
     
     /**
      * @param bool|true $delDir
      * @return bool
      */
-    protected function deleteRecursivelySpl($delDir = true)
+    protected function deleteRecursivelySpl(bool $delDir = true): bool
     {
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->fullName,
-            \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->fullName,
+            FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
             $path->isFile() ? unlink($path->getPathname()) : rmdir($path->getPathname());
         }
         
@@ -226,11 +234,11 @@ class DirectoryInfo
     }
     
     /**
-     * @param $path
+     * @param string $path
      * @param bool|true $delDir
      * @return bool
      */
-    protected function deleteRecursivelyWithoutSpl($path, $delDir = true)
+    protected function deleteRecursivelyWithoutSpl(string $path, bool $delDir = true): bool
     {
         $files = array_diff(scandir($path), ['.', '..']);
         foreach ($files as $file) {
@@ -245,35 +253,35 @@ class DirectoryInfo
     /**
      * @return bool
      */
-    protected function cleanRecursively()
+    protected function cleanRecursively(): bool
     {
         if (class_exists('RecursiveDirectoryIterator') && class_exists('RecursiveIteratorIterator')) {
             return $this->deleteRecursivelySpl(false);
-        } else {
-            return $this->deleteRecursivelyWithoutSpl($this->fullName, false);
         }
+
+        return $this->deleteRecursivelyWithoutSpl($this->fullName, false);
     }
     
     /**
      * @return bool
      */
-    protected function isEmpty()
+    protected function isEmpty(): bool
     {
         if ($this->exists) {
-            return (count(scandir($this->fullName)) == 2);
+            return (count(scandir($this->fullName)) === 2);
         }
         
         return true;
     }
     
-    protected function getInfos()
+    protected function getInfos(): void
     {
         if ($this->exists) {
             $this->setFullName($this->fullName);
         }
         
         $parentPath = dirname($this->fullName);
-        if ($this->loadParent && is_dir($parentPath) && $parentPath != $this->fullName) {
+        if ($this->loadParent && $parentPath !== $this->fullName && is_dir($parentPath)) {
             $this->setParent(new DirectoryInfo($parentPath, false));
         }
     }
@@ -282,7 +290,7 @@ class DirectoryInfo
      * Gets the value of fullName.
      * @return string
      */
-    public function getFullName()
+    public function getFullName(): string
     {
         return $this->fullName;
     }
@@ -292,7 +300,7 @@ class DirectoryInfo
      * @param string $fullName the full name
      * @return self
      */
-    public function setFullName($fullName)
+    public function setFullName(string $fullName): self
     {
         $this->fullName = $fullName;
         
@@ -303,7 +311,7 @@ class DirectoryInfo
      * Gets the value of name.
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -313,18 +321,18 @@ class DirectoryInfo
      * @param string $name the name
      * @return self
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
         
         return $this;
     }
-    
+
     /**
      * Gets the value of parent.
-     * @return DirectoryInfo
+     * @return DirectoryInfo|null
      */
-    public function getParent()
+    public function getParent(): ?DirectoryInfo
     {
         $parentPath = dirname($this->fullName);
         if ($this->parent === null && is_dir($parentPath) && $parentPath != $this->fullName) {
@@ -339,7 +347,7 @@ class DirectoryInfo
      * @param DirectoryInfo $parent the parent
      * @return self
      */
-    public function setParent(DirectoryInfo $parent)
+    public function setParent(DirectoryInfo $parent): self
     {
         $this->parent = $parent;
         
@@ -350,7 +358,7 @@ class DirectoryInfo
      * Gets the value of exists.
      * @return bool
      */
-    public function getExists()
+    public function getExists(): bool
     {
         return $this->exists;
     }
@@ -360,9 +368,9 @@ class DirectoryInfo
      * @param bool $exists the exists
      * @return self
      */
-    public function setExists($exists)
+    public function setExists(bool $exists): self
     {
-        $this->exists = (bool) $exists;
+        $this->exists = $exists;
         
         return $this;
     }
@@ -371,7 +379,7 @@ class DirectoryInfo
      * Gets the value of empty.
      * @return bool
      */
-    public function getEmpty()
+    public function getEmpty(): bool
     {
         return $this->empty;
     }
@@ -381,9 +389,9 @@ class DirectoryInfo
      * @param bool $empty the empty
      * @return self
      */
-    public function setEmpty($empty)
+    public function setEmpty(bool $empty): self
     {
-        $this->empty = (bool) $empty;
+        $this->empty = $empty;
         
         return $this;
     }

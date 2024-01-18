@@ -1,4 +1,6 @@
 <?php
 namespace Izzle\IO\Exception;
 
-class FileNotFoundException extends \Exception { }
+use Exception;
+
+class FileNotFoundException extends Exception { }

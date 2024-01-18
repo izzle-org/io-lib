@@ -2,13 +2,23 @@
 
 use Izzle\IO\Directory;
 use Izzle\IO\DirectoryInfo;
+use Izzle\IO\Exception\ArgumentNullException;
 use Izzle\IO\FileInfo;
 Use Izzle\IO\Path;
 use PHPUnit\Framework\TestCase;
 
 class DirectoryTest extends TestCase
 {
-    public function testGetCurrentDirectory_Create_NonRecursiveDelete()
+    public function testGetCurrentDirectoryCanNotBeInitialized(): void
+    {
+        self::assertNull(Directory::getCurrentDirectory());
+    }
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testGetCurrentDirectory_Create_NonRecursiveDelete(): void
     {
         Directory::create('./tests/Active');
         
@@ -16,14 +26,18 @@ class DirectoryTest extends TestCase
         
         Directory::delete('./tests/Active');
     }
-    
-    public function testGetCurrenDirectory_Create_Hashed_RecursiveDelete()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testGetCurrenDirectory_Create_Hashed_RecursiveDelete(): void
     {
         $filename = Path::combine(sys_get_temp_dir(), 'test.jpg');
         touch($filename);
         try {
             $file = new FileInfo($filename);
-        } catch (\Izzle\IO\Exception\ArgumentNullException $e) {
+        } catch (ArgumentNullException $e) {
         }
     
         Directory::createHashed('./tests/Active', $file);
@@ -34,16 +48,24 @@ class DirectoryTest extends TestCase
         
         unlink($filename);
     }
-    
-    public function testRecursiveDelete()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testRecursiveDelete(): void
     {
         self::assertTrue(Directory::create('./tests/Active'));
         self::assertTrue(Directory::create('./tests/Active/dir1'));
         self::assertTrue(Directory::create('./tests/Active/dir2'));
         self::assertTrue(Directory::delete('./tests/Active', true));
     }
-    
-    public function testClean()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testClean(): void
     {
         Directory::create('./tests/Active');
         Directory::create('./tests/Active/dir1');
@@ -52,16 +74,24 @@ class DirectoryTest extends TestCase
         self::assertTrue($tmp);
         Directory::delete('./tests/Active');
     }
-    
-    public function testExists()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testExists(): void
     {
         Directory::create('./tests/Active');
         self::assertTrue(Directory::exists('./tests/Active'));
         self::assertFalse(Directory::exists('./tests/Active2'));
         Directory::delete('./tests/Active');
     }
-    
-    public function testMove()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testMove(): void
     {
         Directory::create('./tests/Active1');
         Directory::create('./tests/Active2');
@@ -70,15 +100,24 @@ class DirectoryTest extends TestCase
         Directory::delete('./tests/Active1');
         Directory::delete('./tests/Active2', true);
     }
-    
-    public function testRename()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testRename(): void
     {
         Directory::create('./tests/Active1');
         self::assertTrue(Directory::rename('./tests/Active1', 'Active2'));
         Directory::delete('./tests/Active2');
     }
-    
-    public function testGetFiles()
+
+    /**
+     * @throws ArgumentNullException
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testGetFiles(): void
     {
         Directory::create('./tests/Active');
         Directory::create('./tests/Active/Subfolder');
@@ -115,8 +154,12 @@ class DirectoryTest extends TestCase
         
         Directory::delete('./tests/Active', true);
     }
-    
-    public function testGetDirectories()
+
+    /**
+     * @throws \Izzle\IO\Exception\DirectoryNotFoundException
+     * @throws \Izzle\IO\Exception\DirectoryNotEmptyException
+     */
+    public function testGetDirectories(): void
     {
         Directory::create('./tests/Active');
         Directory::create('./tests/Active/Subfolder1');

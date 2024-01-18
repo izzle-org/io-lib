@@ -1,3 +1,8 @@
+1.0.0
+-----
+- Dropping PHP 5 Support
+- Adding PHP 7.4 and 8.x Support
+
 0.7.7
 -----
 - Added PHP 8 Support

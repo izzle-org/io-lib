@@ -1,4 +1,6 @@
 <?php
 namespace Izzle\IO\Exception;
 
-class DirectoryNotFoundException extends \Exception { }
+use Exception;
+
+class DirectoryNotFoundException extends Exception { }
